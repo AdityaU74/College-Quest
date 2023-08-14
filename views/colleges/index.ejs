@@ -1,0 +1,33 @@
+<% layout('layouts/boilerplate')%> 
+
+<div class="container text-center"><h1>All Colleges</h1></div>
+<% for (let clg of college){%>
+<div class="card mb-3" >
+    <div class="row">
+        <div class="col-md-4">
+          <%if(clg.images.length){%>
+            <img class="img-fluid" alt="" src="<%=clg.images[0].url%>">
+            <%}else{%>
+              <img class="img-fluid" alt="" src="https://www.mit.edu/files/images/201807/15656704711_00457bd2c9_b_1.jpg">
+              <%}%>
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+            <div class="container text-center">
+                <h5 class="card-title"><%= clg.title %> </h5>
+                <p class="card-text"><%= clg.description %></p>
+                <p class="card-text">
+                    <small class="text-muted"><%= clg.location%></small>
+                </p>
+                <a class="btn btn-secondary btn-block" href="/colleges/<%=clg._id%>">View <%=clg.title%></a>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<% }%>
+
+
+
