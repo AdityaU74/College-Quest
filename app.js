@@ -10,7 +10,7 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-
+const MongoStore = require('connect-mongo');
 const session = require('express-session')
 
 const userRoutes = require('./routes/users');
@@ -20,7 +20,7 @@ const reviewsRoutes = require('./routes/reviews.js');
 
 const app = express();
 main().catch(err => console.log(err));
-
+const dbUrl = 'mongodb+srv://adityajis:adiism65@cluster0.dhv2aan.mongodb.net/collegeQuest?retryWrites=true&w=majority';
 async function main() {
   await mongoose.connect('mongodb+srv://adityajis:adiism65@cluster0.dhv2aan.mongodb.net/collegeQuest?retryWrites=true&w=majority');
   console.log('database connected!');
@@ -29,7 +29,7 @@ async function main() {
 app.engine('ejs',ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.set('trust proxy', 1) // trust first proxy
+// app.set('trust proxy', 1) // trust first proxy
 // app.use(session({
 //   secret: 'keyboard cat',
 //   resave: false,
@@ -40,8 +40,9 @@ app.set('trust proxy', 1) // trust first proxy
 app.use(express.urlencoded({extended:true}))
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname,'public')))
-
+const secret = process.env.SECRET || 'thisshouldbesecret';
 const sessionConfig = {
+  store: MongoStore.create({ mongoUrl: dbUrl, touchAfter: 24 * 60 * 60, secret }),
   secret: 'thisshouldbesecret',
   resave: false,
   saveUninitialized: true,
