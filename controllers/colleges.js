@@ -16,7 +16,7 @@ const createCollege = async (req, res) => {
         query: req.body.college.location,
         limit: 1
     }).send()
-    // console.log(geoData.body.features[0].geometry.coordinates);
+    console.log(geoData.body.features[0].geometry.coordinates);
     const college = new College(req.body.college);
     college.geometry = geoData.body.features[0].geometry;
     college.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
