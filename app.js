@@ -1,4 +1,7 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== "production") {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -10,8 +13,9 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-const MongoStore = require('connect-mongo');
+
 const session = require('express-session')
+const MongoStore = require('connect-mongo');
 
 const userRoutes = require('./routes/users');
 const collegesRoutes = require('./routes/colleges.js');
@@ -19,17 +23,27 @@ const reviewsRoutes = require('./routes/reviews.js');
 
 
 const app = express();
+
+const dbUrl = process.env.DB_URL;
+
 main().catch(err => console.log(err));
-const dbUrl = 'mongodb+srv://adityajis:adiism65@cluster0.dhv2aan.mongodb.net/collegeQuest?retryWrites=true&w=majority';
+
 async function main() {
-  await mongoose.connect('mongodb+srv://adityajis:adiism65@cluster0.dhv2aan.mongodb.net/collegeQuest?retryWrites=true&w=majority');
-  console.log('database connected!');
+  try{
+    await mongoose.connect(dbUrl);
+    console.log('database connected!');
+
+  }
+  catch(err){
+    console.log(err);
+  }
+  
 }
 
 app.engine('ejs',ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-// app.set('trust proxy', 1) // trust first proxy
+app.set('trust proxy', 1) // trust first proxy
 // app.use(session({
 //   secret: 'keyboard cat',
 //   resave: false,
@@ -40,9 +54,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended:true}))
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname,'public')))
-const secret = process.env.SECRET || 'thisshouldbesecret';
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+      secret: 'thisshouldbeasecret'
+  }
+});
+
 const sessionConfig = {
-  store: MongoStore.create({ mongoUrl: dbUrl, touchAfter: 24 * 60 * 60, secret }),
+  store,
   secret: 'thisshouldbesecret',
   resave: false,
   saveUninitialized: true,
@@ -86,7 +108,7 @@ app.use((err, req, res, next) => {
   if (!err.message) err.message = 'Oh No, Something Went Wrong!'
   res.status(statusCode).render('error', { err })
 })
-const port = process.env.port||3000
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+
+app.listen(3000, () => {
+  console.log(`Example app listening on port 3000`)
 })
