@@ -12,6 +12,7 @@ const index = async (req, res) => {
 }
 
 const createCollege = async (req, res) => {
+    console.log("hello createcollege");
     const geoData = await geocoder.forwardGeocode({
         query: req.body.college.location,
         limit: 1
@@ -28,6 +29,7 @@ const createCollege = async (req, res) => {
 }
 
 const renderNewForm = (req, res) => {
+    console.log("hello rendernewform");
     res.render('colleges/new');
 };
 
