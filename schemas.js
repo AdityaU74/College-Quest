@@ -5,7 +5,7 @@ module.exports.collegeSchema = Joi.object({
     college: Joi.object({
         title: Joi.string().required(),
         budget: Joi.number().required().min(0),
-        image: Joi.string(),
+        image: Joi.array(),
         location: Joi.string().required(),
         description: Joi.string().required()
     }).required(),
