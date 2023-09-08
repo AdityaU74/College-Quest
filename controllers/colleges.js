@@ -17,15 +17,21 @@ const createCollege = async (req, res) => {
         query: req.body.college.location,
         limit: 1
     }).send()
-    console.log(geoData.body.features[0].geometry.coordinates);
-    const college = new College(req.body.college);
-    college.geometry = geoData.body.features[0].geometry;
-    college.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
-    college.author = req.user._id;
-    await college.save();
-    console.log(college);
-    req.flash('success', 'Successfully added a new institution!');
-    res.redirect(`/colleges/${college._id}`)
+    try{
+        console.log(geoData.body.features[0].geometry.coordinates);
+        const college = new College(req.body.college);
+        college.geometry = geoData.body.features[0].geometry;
+        college.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+        college.author = req.user._id;
+        await college.save();
+        console.log(college);
+        req.flash('success', 'Successfully added a new institution!');
+        res.redirect(`/colleges/${college._id}`)
+    }
+    catch(err){
+        console.log(err);
+    }
+    
 }
 
 const renderNewForm = (req, res) => {
